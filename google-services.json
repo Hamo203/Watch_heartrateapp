@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "999149446052",
+    "project_id": "watchheartrate-e5768",
+    "storage_bucket": "watchheartrate-e5768.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:999149446052:android:a0ae1b93b6a0af086a9731",
+        "android_client_info": {
+          "package_name": "jp.aoyama.h15822097.watch_heartrateapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOqEDr-uU2V1bMNsdKFW_rgZLSERYMI58"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
