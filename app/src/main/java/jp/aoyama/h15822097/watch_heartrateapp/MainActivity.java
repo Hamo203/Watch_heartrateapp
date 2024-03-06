@@ -41,10 +41,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     FirebaseFirestore firebase;
     private String info;
-    private String sensorname="heatbeat";
+    private String sensorname="heartbeat";
     private String sensorname2="acc";
-
-
 
     //chart用
 
@@ -63,11 +61,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         Context context = getApplicationContext();
         FirebaseApp.initializeApp(context);
-
-
-        //chart用の表示
-        //lineChart=findViewById(R.id.chart);
-        //lineChart.getAxisRight().setDrawLabels(false);
 
     }
     public void start_onClick(View view){
@@ -92,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         pdata.put("beat","test");
         pdata.put("time","test");
 
-        firebase.collection(sensorname).document(info).collection("heartbeat").add(pdata).addOnSuccessListener(this);
+        firebase.collection(sensorname).document(info).collection(sensorname).add(pdata).addOnSuccessListener(this);
 
 
         //コレクション名決定2
@@ -101,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         p2data.put("acc","test");
         p2data.put("time","test");
 
-        firebase.collection(sensorname2).document(info).collection("acc").add(p2data).addOnSuccessListener(this);
+        firebase.collection(sensorname2).document(info).collection(sensorname2).add(p2data).addOnSuccessListener(this);
 
 
         //センサー起動
@@ -110,15 +103,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //センサー1起動
         sma.registerListener(this, sma.getDefaultSensor(Sensor.TYPE_HEART_RATE), SensorManager.SENSOR_DELAY_NORMAL);
         //センサー2起動
-        sma.registerListener(this, sma.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
-        Log.d(TAG, "Sensor started");
+        sma.registerListener(this, sma.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        Log.d("test", "Sensor started");
     }
     public void stop_onClick(View view){
         //センサー止める
         SensorManager sma=(SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sma.unregisterListener((SensorEventListener) this);
-        Log.d(TAG, "Sensor stopped"); // ログメッセージを追加
+        Log.d("test", "Sensor stopped"); // ログメッセージを追加
 
+        // 心拍センサーの値が Firebase に格納されたら、加速度センサーの値も格納できるようにフラグをリセットする
+        isHeartRateChanged = false;
 
     }
 
@@ -135,24 +130,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         t_time.setText(time);
         Log.d(TAG, time);
 
+        String documentid = String.valueOf(System.currentTimeMillis());
+
+
         if (event.sensor.getType() == Sensor.TYPE_HEART_RATE) {
             double heart;
 
             heart = event.values[0];
             t_heart.setText(Double.toString(heart));
-            Log.d(TAG, "Heart rate: " + heart); // ログメッセージを追加
+            Log.d("test", "Heart rate: " + heart); // ログメッセージを追加
 
 
             Map<String, Object> pdata = new HashMap<>();
             pdata.put("beat", heart);
             pdata.put("time", time);
 
+            //firebase.collection(sensorname).document(info).collection("heartbeat").document(documentid).set(pdata).addOnSuccessListener(this);
 
-            String documentid = Integer.toString(id);
+            heartRateChanged();
 
-            firebase.collection(sensorname).document(info).collection("heartbeat").document(documentid).set(pdata).addOnSuccessListener(this);
-
-            id++;
         }
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             // 加速度センサーのデータ処理
@@ -161,21 +157,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             float y = values[1];
             float z = values[2];
 
-            Map<String, Object> p2data = new HashMap<>();
-            p2data.put("x", x);
-            p2data.put("y", y);
-            p2data.put("z", z);
-
-            Log.d(TAG, "Accelerometer Data - X: " + x + ", Y: " + y + ", Z: " + z);
-            // 加速度センサーのデータをFirestoreに保存するなどの処理を行う
-
-            String documentid2 = Integer.toString(id2);
-
-            firebase.collection(sensorname2).document(info).collection("acc").document(documentid2).set(p2data).addOnSuccessListener(this);
-            id2++;
+            // 心拍センサーの値が変化した場合のみ Firebase に格納するようにする
+            if (isHeartRateChanged) {
+                Map<String, Object> p2data = new HashMap<>();
+                p2data.put("x", x);
+                p2data.put("y", y);
+                p2data.put("z", z);
+                Log.d("test", "Accelerometer Data - X: " + x + ", Y: " + y + ", Z: " + z);
+                isHeartRateChanged = false;
+                //firebase.collection(sensorname2).document(info).collection(sensorname2).document(documentid).set(p2data).addOnSuccessListener(this);
+            }
         }
 
+
     }
+
+    private boolean isHeartRateChanged = false;
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
@@ -185,12 +182,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onSuccess(Object o) {
         Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_LONG).show();
-
+        // 心拍センサーの値が Firebase に格納されたら、加速度センサーの値も格納できるようにフラグをリセットする
+        isHeartRateChanged = false;
     }
+
 
     @Override
     public void onFailure(@NonNull Exception e) {
         Toast.makeText(getApplicationContext(),"Failure",Toast.LENGTH_LONG).show();
 
+    }
+
+    // 心拍センサーの値が変化したことをフラグで示すメソッド
+    public void heartRateChanged() {
+        isHeartRateChanged = true;
+        Log.d("test","sensor get");
     }
 }
