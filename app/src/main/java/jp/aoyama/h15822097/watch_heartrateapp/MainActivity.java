@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private String info;
     private String sensorname="heartbeat";
     private String sensorname2="acc";
+    private String name;//ユーザ名
 
     //chart用
 
@@ -56,6 +59,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         this.stop_btn=findViewById(R.id.stop_btn);
         this.t_heart=findViewById(R.id.beat);
         this.t_time=findViewById(R.id.time);
+
+
+        //ユーザの名前をregistActivityから受け取る
+        Intent intent=getIntent();
+        name=intent.getStringExtra("name");
+        Log.d("test",name);
 
         Log.d("test", "Activity created");
 
@@ -76,26 +85,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Log.d("test",info+"\n");
 
 
-        // Access a Cloud Firestore instance from your Activity
-        firebase=FirebaseFirestore.getInstance();
-
         //コレクション名決定
-        CollectionReference names= firebase.collection(sensorname);
+        firebase=FirebaseFirestore.getInstance();
+        CollectionReference names= firebase.collection(name);
+        //心拍数用テストデータの挿入
         Map<String,Object> pdata=new HashMap<>();
         pdata.put("beat","test");
         pdata.put("time","test");
+        firebase.collection(name).document(info).collection(sensorname).add(pdata).addOnSuccessListener(this);
 
-        firebase.collection(sensorname).document(info).collection(sensorname).add(pdata).addOnSuccessListener(this);
-
-
-        //コレクション名決定2
-        CollectionReference names2= firebase.collection(sensorname2);
+        //加速度用テストデータの挿入
         Map<String,Object> p2data=new HashMap<>();
         p2data.put("acc","test");
         p2data.put("time","test");
-
-        firebase.collection(sensorname2).document(info).collection(sensorname2).add(p2data).addOnSuccessListener(this);
-
+        firebase.collection(name).document(info).collection(sensorname2).add(p2data).addOnSuccessListener(this);
 
         //センサー起動
         SensorManager sma=(SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -130,10 +133,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         t_time.setText(time);
         Log.d(TAG, time);
 
-        String documentid = String.valueOf(System.currentTimeMillis());
-
+        // 現在のタイムスタンプを取得する
+        Timestamp timestamp = Timestamp.now();
+        // タイムスタンプをベースにしてIDを生成する
+        String customId = String.valueOf(timestamp.getSeconds());
 
         if (event.sensor.getType() == Sensor.TYPE_HEART_RATE) {
+            //心拍数の値を得た場合
             double heart;
 
             heart = event.values[0];
@@ -145,8 +151,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             pdata.put("beat", heart);
             pdata.put("time", time);
 
-            //firebase.collection(sensorname).document(info).collection("heartbeat").document(documentid).set(pdata).addOnSuccessListener(this);
 
+            firebase.collection(name).document(info).collection("heartbeat").document(customId).set(pdata).addOnSuccessListener(this);
             heartRateChanged();
 
         }
@@ -165,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 p2data.put("z", z);
                 Log.d("test", "Accelerometer Data - X: " + x + ", Y: " + y + ", Z: " + z);
                 isHeartRateChanged = false;
-                //firebase.collection(sensorname2).document(info).collection(sensorname2).document(documentid).set(p2data).addOnSuccessListener(this);
+                firebase.collection(name).document(info).collection(sensorname2).document(customId).set(p2data).addOnSuccessListener(this);
             }
         }
 
