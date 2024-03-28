@@ -24,6 +24,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -84,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         info=sdf.format(date) ;
         Log.d("test",info+"\n");
 
-
         //コレクション名決定
         firebase=FirebaseFirestore.getInstance();
         CollectionReference names= firebase.collection(name);
@@ -92,12 +92,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Map<String,Object> pdata=new HashMap<>();
         pdata.put("beat","test");
         pdata.put("time","test");
+        pdata.put("timestamp", FieldValue.serverTimestamp());
         firebase.collection(name).document(info).collection(sensorname).add(pdata).addOnSuccessListener(this);
 
         //加速度用テストデータの挿入
         Map<String,Object> p2data=new HashMap<>();
         p2data.put("acc","test");
         p2data.put("time","test");
+        p2data.put("timestamp", FieldValue.serverTimestamp());
         firebase.collection(name).document(info).collection(sensorname2).add(p2data).addOnSuccessListener(this);
 
         //センサー起動
@@ -150,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Map<String, Object> pdata = new HashMap<>();
             pdata.put("beat", heart);
             pdata.put("time", time);
+            pdata.put("timestamp", timestamp);
 
 
             firebase.collection(name).document(info).collection("heartbeat").document(customId).set(pdata).addOnSuccessListener(this);
@@ -169,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 p2data.put("x", x);
                 p2data.put("y", y);
                 p2data.put("z", z);
+                p2data.put("timestamp", timestamp);
                 Log.d("test", "Accelerometer Data - X: " + x + ", Y: " + y + ", Z: " + z);
                 isHeartRateChanged = false;
                 firebase.collection(name).document(info).collection(sensorname2).document(customId).set(p2data).addOnSuccessListener(this);
