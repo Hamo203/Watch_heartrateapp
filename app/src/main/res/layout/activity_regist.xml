@@ -21,11 +21,25 @@
             android:text="名前を入力してください" />
 
         <EditText
-            android:id="@+id/registName"
+            android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:text="名前を入力"/>
+            android:hint="Email"
+            android:minHeight="48dp" />
+
+        <EditText
+
+            android:id="@+id/pass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Pass"
+            android:minHeight="48dp" />
+        <ProgressBar
+            android:id="@+id/progressbar"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
 
         <Button
             android:id="@+id/nextbtn"
