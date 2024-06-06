@@ -18,22 +18,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="名前を入力してください" />
+            android:text="idを入力してください" />
 
         <EditText
-            android:id="@+id/email"
+            android:id="@+id/userid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
+            android:hint="UserID"
             android:minHeight="48dp" />
 
-        <EditText
 
-            android:id="@+id/pass"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Pass"
-            android:minHeight="48dp" />
         <ProgressBar
             android:id="@+id/progressbar"
             android:visibility="gone"
@@ -42,7 +36,7 @@
 
 
         <Button
-            android:id="@+id/nextbtn"
+            android:id="@+id/nextBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="nextonClick"
