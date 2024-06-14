@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".mainWatch">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/mode_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:hint="モード : " />
+
+        <TextView
+            android:id="@+id/setmode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/showtime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="経過時間　: " />
+
+        <TextView
+            android:id="@+id/settime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/showheart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="心拍数 : " />
+
+        <TextView
+            android:id="@+id/setheart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="" />
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/funcBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="funcBtn"
+            android:text="Start" />
+
+    </LinearLayout>
+
+</LinearLayout>

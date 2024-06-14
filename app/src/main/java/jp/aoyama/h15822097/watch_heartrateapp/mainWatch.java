@@ -38,9 +38,7 @@ public class mainWatch extends AppCompatActivity implements SensorEventListener 
     FirebaseAuth mAuth;
     Date date;
     SimpleDateFormat sdf;
-    private TextView showtime;
-    private TextView showheart;
-    String currenttime;
+
 
     String g_mode;
     String g_date;
@@ -48,8 +46,10 @@ public class mainWatch extends AppCompatActivity implements SensorEventListener 
 
     private long startTime;
     private long endTime;
+    private long currenttime;
 
     private boolean isHeartRateChanged = false;
+    String customId;
 
 
     @Override
@@ -64,11 +64,21 @@ public class mainWatch extends AppCompatActivity implements SensorEventListener 
         g_id =gintent.getStringExtra("id");
         g_date =gintent.getStringExtra("date");
         g_mode=gintent.getStringExtra("mode");
+        Log.d("test",g_mode);
+        TextView mode =findViewById(R.id.setmode);
+        mode.setText(g_mode);
 
     }
     public void funcBtn(View view){
         btntext=funcBtn.getText().toString();
         if(btntext.equals("Start")){
+
+            // 現在のタイムスタンプを取得する
+            Timestamp timestamp = Timestamp.now();
+            // タイムスタンプをベースにしてIDを生成する
+            customId = String.valueOf(timestamp.getSeconds());
+
+            Log.d("test","start");
             //開始時間を記録
             startTime=System.currentTimeMillis();
 
@@ -77,33 +87,26 @@ public class mainWatch extends AppCompatActivity implements SensorEventListener 
             Context context = getApplicationContext();
             FirebaseApp.initializeApp(context);
 
-            Log.d("test",info+"\n");
             firebase= FirebaseFirestore.getInstance();
-
-            //心拍数用テストデータの挿入
-            Map<String,Object> pdata=new HashMap<>();
-            pdata.put("beat","test");
-            pdata.put("time","test");
-            pdata.put("timestamp", FieldValue.serverTimestamp());
-            firebase.collection(g_id).document(g_date).collection(g_mode).add(pdata);
 
             //startボタン押されたらセンサ起動する
             //センサー起動
-            //SensorManager sma=(SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            SensorManager sma=(SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
             //センサー1(心拍数)起動
-            //sma.registerListener(this, sma.getDefaultSensor(Sensor.TYPE_HEART_RATE), SensorManager.SENSOR_DELAY_NORMAL);
+            sma.registerListener(this, sma.getDefaultSensor(Sensor.TYPE_HEART_RATE), SensorManager.SENSOR_DELAY_NORMAL);
             //センサー2起動
             //sma.registerListener(this, sma.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
 
 
         }else if(btntext.equals("Stop")){
+
             endTime=System.currentTimeMillis();
             long diffTime = (endTime - startTime);
 
             //センサー止める
-            //SensorManager sma=(SensorManager) getSystemService(Context.SENSOR_SERVICE);
-            //sma.unregisterListener((SensorEventListener) this);
+            SensorManager sma=(SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            sma.unregisterListener(this);
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
             Log.d("test", "Sensor stopped:"+sdf.format(diffTime)); // ログメッセージを追加
 
@@ -117,34 +120,29 @@ public class mainWatch extends AppCompatActivity implements SensorEventListener 
     @Override
     public void onSensorChanged(SensorEvent event) {
 
-        // Dateオブジェクトを用いて現在時刻を取得してくる値を 変数 date に格納
-        Date date = new Date();
-        // SimpleDateFormat をオブジェクト化し、任意のフォーマットを設定
-        SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss.SSS");
-        //経過時間
-        currenttime = sdf2.format(date);
-        Log.d("test", currenttime);
-
-        showtime.setText(info);
-        Log.d("test", info);
-
-        // 現在のタイムスタンプを取得する
-        Timestamp timestamp = Timestamp.now();
-        // タイムスタンプをベースにしてIDを生成する
-        String customId = String.valueOf(timestamp.getSeconds());
-
         if (event.sensor.getType() == Sensor.TYPE_HEART_RATE) {
+            //経過時間
+            currenttime = System.currentTimeMillis();;
+            long diffTime = (currenttime - startTime);
+            TextView settime=findViewById(R.id.settime);
+            settime.setText(String.valueOf((int) diffTime/1000));
             //心拍数の値を得た場合
             double heart;
-
             heart = event.values[0];
-            showheart.setText(Double.toString(heart));
+            TextView setheart=findViewById(R.id.setheart);
+            setheart.setText(String.valueOf((int) heart));
+
+
             Log.d("test", "Heart rate: " + heart); // ログメッセージを追加
             Map<String, Object> pdata = new HashMap<>();
             pdata.put("beat", heart);
-            pdata.put("time", showtime);
-            pdata.put("timestamp", timestamp);
-            //firebase.collection(user.getUid()).document(info).collection("heartbeat").document(customId).set(pdata).addOnSuccessListener(this);
+            pdata.put("time", diffTime/1000);
+
+            if(g_mode.equals("rest")){
+                firebase.collection(g_id).document(g_date).collection(g_mode).add(pdata);
+            }else{
+                firebase.collection(g_id).document(g_date).collection("customid").document(customId).collection(g_mode).add(pdata);
+            }
             heartRateChanged();
 
         }
@@ -161,7 +159,6 @@ public class mainWatch extends AppCompatActivity implements SensorEventListener 
                 p2data.put("x", x);
                 p2data.put("y", y);
                 p2data.put("z", z);
-                p2data.put("timestamp", timestamp);
                 Log.d("test", "Accelerometer Data - X: " + x + ", Y: " + y + ", Z: " + z);
                 isHeartRateChanged = false;
                 //firebase.collection(name).document(info).collection(sensorname2).document(customId).set(p2data).addOnSuccessListener(this);
