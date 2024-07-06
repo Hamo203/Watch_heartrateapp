@@ -6,12 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class selectActivity extends AppCompatActivity {
     RadioGroup radioGroup;
@@ -25,19 +23,15 @@ public class selectActivity extends AppCompatActivity {
         radioGroup=(RadioGroup) findViewById(R.id.radioGroup);
         Log.d("test","select oncreate");
         firebaseAuth=FirebaseAuth.getInstance();
-
     }
 
-    public void nextonClick(View v){//次へボタンが押されたとき
+    public void nextonClick(View v){
+        //次へボタンが押されたとき
         //radio button のid取得
         checkedId = radioGroup.getCheckedRadioButtonId();
-        Intent gintent=getIntent();
-        String g_id =gintent.getStringExtra("id");
-        String g_date =gintent.getStringExtra("date");
 
-        Intent intent=new Intent(getApplicationContext(),mainWatch.class);
-        intent.putExtra("id",g_id);
-        intent.putExtra("date",g_date);
+        Intent intent=new Intent(getApplicationContext(), MainWatch.class);
+
 
         if(checkedId == R.id.restbeat){
             Toast.makeText(getApplicationContext(), "安静時心拍数", Toast.LENGTH_SHORT).show();

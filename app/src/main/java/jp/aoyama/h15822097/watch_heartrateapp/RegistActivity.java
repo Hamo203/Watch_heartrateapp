@@ -1,5 +1,6 @@
 package jp.aoyama.h15822097.watch_heartrateapp;
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -39,7 +41,6 @@ public class RegistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_regist);
         editid=findViewById(R.id.userid);
-
         nextBtn=findViewById(R.id.nextBtn);
         progressBar=findViewById(R.id.progressbar);
         mAuth= FirebaseAuth.getInstance();
@@ -49,21 +50,22 @@ public class RegistActivity extends AppCompatActivity {
         // SimpleDateFormat をオブジェクト化し、任意のフォーマットを設定
         sdf= new SimpleDateFormat("yyyy-MM-dd");
 
+        DataHolder.getInstance().setDate(date);
+
     }
 
     public void nextonClick(View v){
         //進度見れるバー
         progressBar.setVisibility(View.VISIBLE);
 
-        String id;
-        id=String.valueOf(editid.getText());
+        String id=String.valueOf(editid.getText());
+        DataHolder.getInstance().setPersonalid(id);
 
         if(TextUtils.isEmpty(id)){
             //email入力なかったら
             Toast.makeText(getApplicationContext(),"UserIdが空欄です",Toast.LENGTH_SHORT).show();
         }
 
-        Log.d("test","date:"+sdf.format(date));
         DocumentReference docRef = db.collection(id).document(sdf.format(date));
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -72,8 +74,8 @@ public class RegistActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         Intent intent=new Intent(getApplicationContext(),selectActivity.class);
-                        intent.putExtra("id",id);//id
-                        intent.putExtra("date",sdf.format(date)); //日付を次ページへ
+                        //intent.putExtra("id",id);//id
+                        //intent.putExtra("date",sdf.format(date)); //日付を次ページへ
                         startActivity(intent);
 
 

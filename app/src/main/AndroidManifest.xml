@@ -12,7 +12,12 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault">
         <activity
-            android:name=".mainWatch"
+            android:name=".MainWatch"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat" />
+
+        <activity
+            android:name=".MainActivity$mainWatch"
             android:exported="true"
             android:theme="@style/Theme.AppCompat">
             <meta-data

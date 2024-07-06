@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace 'jp.aoyama.h15822097.watch_heartrateapp'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "jp.aoyama.h15822097.watch_heartrateapp"
         minSdk 28
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -37,5 +37,6 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.google.firebase:firebase-firestore:24.10.0'
     implementation 'com.google.firebase:firebase-auth:22.3.1'
+    implementation 'androidx.activity:activity:1.9.0'
 
 }
