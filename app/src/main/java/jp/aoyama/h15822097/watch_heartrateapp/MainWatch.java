@@ -155,7 +155,7 @@ public class MainWatch extends AppCompatActivity implements SensorEventListener 
             if(getMode.equals("rest")){
                 firebase.collection(getId).document(getDate).collection(getMode).add(pdata);
             }else{
-                firebase.collection(getId).document(getDate).collection(getMode).document(customId).collection("title").add(pdata);
+                firebase.collection(getId).document(getDate).collection(getMode).document("title").collection(customId).add(pdata);
             }
             heartRateChanged();
 

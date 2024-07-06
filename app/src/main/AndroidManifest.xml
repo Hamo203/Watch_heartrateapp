@@ -12,18 +12,14 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault">
         <activity
+            android:name=".selectTitleActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat" />
+        <activity
             android:name=".MainWatch"
             android:exported="true"
             android:theme="@style/Theme.AppCompat" />
 
-        <activity
-            android:name=".MainActivity$mainWatch"
-            android:exported="true"
-            android:theme="@style/Theme.AppCompat">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
         <activity
             android:name=".selectActivity"
             android:exported="true"
